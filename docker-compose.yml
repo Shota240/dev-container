@@ -1,23 +1,41 @@
 version: '3.9'
 services:
-  # アプリケーションのコンテナ
-  app:
-    container_name: app_container
+  # フロントエンド用のコンテナ
+  app_frontend:
+    container_name: app_frontend
     build: 
       context: .
-      dockerfile: ./app/Dockerfile
+      dockerfile: ./app/frontend/Dockerfile
     ports:
       - 3000:3000
     volumes:
       - ../src/www:/var/www:cached
     working_dir: /var/www
-    # command: sh -c "cd client && yarn install --frozen-lockfile && yarn start"
     depends_on:
       - db
     stdin_open: true
     tty: true
     environment:
       TZ: Asia/Tokyo
+
+  # バックエンド用のコンテナ
+  app_backend:
+    container_name: app_backend
+    build: 
+      context: .
+      dockerfile: ./app/backend/Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ../src/www:/var/www:cached
+    working_dir: /var/www
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: Asia/Tokyo
+
   # DBのコンテナ
   db:
     platform: linux/x86_64
